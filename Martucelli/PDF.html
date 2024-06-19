@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Gestión de Rutinas</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulario de Gestión de Rutinas</h1>
+    <form id="formulario">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido" required><br><br>
+
+        <label for="turno">Turno:</label>
+        <select id="turno" name="turno" required>
+            <option value="mañana">Mañana</option>
+            <option value="tarde">Tarde</option>
+            <option value="noche">Noche</option>
+        </select><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label>¿Trabaja?</label>
+        <input type="radio" id="trabaja_si" name="trabaja" value="Sí" required>
+        <label for="trabaja_si">Sí</label>
+        <input type="radio" id="trabaja_no" name="trabaja" value="No">
+        <label for="trabaja_no">No</label><br><br>
+
+        <label>¿Hace cosas extracurriculares?</label>
+        <input type="radio" id="extracurriculares_si" name="extracurriculares" value="Sí" required onclick="toggleExtracurriculares(true)">
+        <label for="extracurriculares_si">Sí</label>
+        <input type="radio" id="extracurriculares_no" name="extracurriculares" value="No" onclick="toggleExtracurriculares(false)">
+        <label for="extracurriculares_no">No</label><br><br>
+
+        <div id="extracurriculares_detalle" class="hidden">
+            <label for="actividad">¿Qué hace?</label>
+            <input type="text" id="actividad" name="actividad"><br><br>
+
+            <label for="horario">Horario:</label>
+            <input type="time" id="horario" name="horario"><br><br>
+        </div>
+
+        <button type="button" onclick="generarPDF()">Generar PDF</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function toggleExtracurriculares(show) {
+            document.getElementById('extracurriculares_detalle').classList.toggle('hidden', !show);
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const turno = document.getElementById('turno').value;
+            const email = document.getElementById('email').value;
+            const trabaja = document.querySelector('input[name="trabaja"]:checked').value;
+            const extracurriculares = document.querySelector('input[name="extracurriculares"]:checked').value;
+            const actividad = document.getElementById('actividad').value;
+            const horario = document.getElementById('horario').value;
+
+            // Título centrado y subrayado
+            const titulo = `Rutinas (${nombre})`;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const textWidth = doc.getTextWidth(titulo);
+            const xPos = (pageWidth - textWidth) / 2;
+            doc.text(titulo, xPos, 10);
+            doc.setLineWidth(0.5);
+            doc.line(xPos, 12, xPos + textWidth, 12);
+
+            // Espacio adicional entre el título y la información del usuario
+            const yOffset = 30;
+            const lineHeight = 10; // Altura de cada línea
+
+            // Información del usuario con suficiente espacio entre líneas
+            let currentY = 10 + yOffset;
+            doc.text(`Nombre: ${nombre}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`Apellido: ${apellido}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`Turno: ${turno}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`Email: ${email}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`¿Trabaja?: ${trabaja}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`¿Hace cosas extracurriculares?: ${extracurriculares}`, 10, currentY);
+            currentY += lineHeight;
+            if (extracurriculares === 'Sí') {
+                doc.text(`Actividad: ${actividad}`, 10, currentY);
+                currentY += lineHeight;
+                doc.text(`Horario: ${horario}`, 10, currentY);
+                currentY += lineHeight;
+            }
+
+            // Función para dibujar cuadrados
+            function drawSquare(doc, x, y, size) {
+                doc.rect(x, y, size, size);
+            }
+
+            // Secciones de la rutina con cuadrados
+            const sectionYOffset = currentY + 30;
+            const squareSize = 5; // Tamaño del cuadrado
+
+            // Mañana
+            doc.text('Mañana (6:00 - 12:00)', 10, sectionYOffset);
+            drawSquare(doc, 10, sectionYOffset + 10, squareSize);
+            drawSquare(doc, 10, sectionYOffset + 20, squareSize);
+
+            // Tarde
+            doc.text('Tarde (12:00 - 19:00)', 10, sectionYOffset + 40);
+            drawSquare(doc, 10, sectionYOffset + 50, squareSize);
+            drawSquare(doc, 10, sectionYOffset + 60, squareSize);
+
+            // Noche
+            doc.text('Noche (19:00 - 24:00)', 10, sectionYOffset + 80);
+            drawSquare(doc, 10, sectionYOffset + 90, squareSize);
+            drawSquare(doc, 10, sectionYOffset + 100, squareSize);
+
+            // Asignar la actividad extracurricular a la sección correspondiente
+            if (extracurriculares === 'Sí') {
+                const horarioHora = parseInt(horario.split(':')[0]);
+                if (horarioHora >= 6 && horarioHora < 12) {
+                    doc.text(`Actividad: ${actividad} (${horario})`, 10, sectionYOffset + 35);
+                } else if (horarioHora >= 12 && horarioHora < 19) {
+                    doc.text(`Actividad: ${actividad} (${horario})`, 10, sectionYOffset + 75);
+                } else if (horarioHora >= 19 && horarioHora < 24) {
+                    doc.text(`Actividad: ${actividad} (${horario})`, 10, sectionYOffset + 115);
+                }
+            }
+
+            // Guardar el archivo como "nombre_rutina.pdf"
+            doc.save(`${nombre}_rutina.pdf`);
+        }
+    </script>
+</body>
+</html>

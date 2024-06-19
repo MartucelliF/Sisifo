@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>prueba de HTML con PHP</title>
+</head>
+<body>
+    <form action="php/crearUsuario.php" name="" method="post">
+        <fieldset class="datosUsuario">
+            <legend>DATOS USUARIO</legend>
+            <label for="nombre_usuario">Nombre Usuario: </label>
+            <input type="text" name="nombre_usuario" id="nombre_usuario" required>
+            <br>
+            <label for="correo_usuario">Email:</label>
+            <input type="email" name="correo_usuario" id="correo_usuario" placeholder="ejemplo@gmail.com" required>
+        </fieldset>
+        <br>
+
+        <input type="submit" name="rutina" value="Enviar">
+    </form>
+    
+</body>
+</html>
