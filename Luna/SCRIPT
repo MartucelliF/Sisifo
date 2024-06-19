@@ -1,0 +1,32 @@
+<?php
+$servername = "localhost";
+$username = "root"; // 
+$password = ""; // 
+$dbname = "Investigadores";
+
+// Crear conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+// Consulta SQL
+$sql = "SELECT investigador.nombre AS investigador, equipos.nombre AS equipo, facultad.nombre AS facultad, reserva.fecha
+        FROM reserva
+        JOIN investigador ON reserva.investigador_id = investigador.id
+        JOIN equipos ON reserva.equipo_id = equipos.id
+        JOIN facultad ON investigador.facultad_id = facultad.id";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Salida de datos de cada fila
+    while($row = $result->fetch_assoc()) {
+        echo "Investigador: " . $row["investigador"] . " - Equipo: " . $row["equipo"] . " - Facultad: " . $row["facultad"] . " - Fecha: " . $row["fecha"] . "\n";
+    }
+} else {
+    echo "0 resultados";
+}
+$conn->close();
+?>
