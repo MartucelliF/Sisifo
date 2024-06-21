@@ -2,6 +2,9 @@
 
 include("conexion.php");
 $nombre_usuario = $_POST["nombre_usuario"];//las variables van a almacenar el valor que recupera "POST" del valor del formulario
+$correo_usuario = $_POST["correo_usuario"];
+
+echo $correo_usuario;
 ?>
 
 <!DOCTYPE html>
@@ -13,8 +16,7 @@ $nombre_usuario = $_POST["nombre_usuario"];//las variables van a almacenar el va
     <title>CREAR TAREA: "<?php echo $nombre_usuario ?>"</title>
 </head>
 <body>
-</body>
-</html>
+
 
 <?php
 
@@ -39,7 +41,7 @@ if (!isset($_GET['paso']) || $_GET['paso'] == 0) {
     ?>
 
     <form action="crearTarea.php?paso=1" method="post">
-        <h1>Formulario de Gestión de Tareas: CATEGORÍA</h1>
+        <h1>Formulario de Gestión de Tareas: 0/4</h1>
         <fieldset class="datosTarea">
             <label for="categoria">Categoría:</label>
             <select id="categoria" name="categoria" required>
@@ -55,6 +57,7 @@ if (!isset($_GET['paso']) || $_GET['paso'] == 0) {
                 ?>
             </select>
             <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
+            <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
             <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
             <input type="submit" name="comun2" value="Seleccionar">
             <input type="reset" name="Limpiar" value="LIMPIAR">
@@ -86,7 +89,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 1) {
 
     ?>
     <form action="crearTarea.php?paso=2" method="post">
-        <h1>Formulario de Gestión de Tareas: SUBCATEGORÍA</h1>
+        <h1>Formulario de Gestión de Tareas: 1/4 </h1>
         <fieldset class="datosTarea">
             <label for="categoria">Categoría: <?php echo $categoria ?></label>
             <br>
@@ -102,6 +105,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 1) {
                 ?>
             </select>
             <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
+            <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
             <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
             <input type="submit" name="comun2" value="Seleccionar">
             <input type="reset" name="Limpiar" value="LIMPIAR">
@@ -123,7 +127,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 2) {
 
     ?>
     <form action="crearTarea.php?paso=3" method="post">
-        <h1>Formulario de Gestión de Tareas: TURNO</h1>
+        <h1>Formulario de Gestión de Tareas: 2/4 </h1>
         <fieldset class="datosTarea">
             <label for="categoria">Categoría: <?php echo $categoria ?></label>
             <br>
@@ -144,6 +148,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 2) {
         <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
         <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
         <input type="hidden" name="categoria" value="<?php echo $categoria; ?>">
+        <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
         <input type="hidden" name="subcategoria" value="<?php echo $subcategoria; ?>">
     </form>
 <?php
@@ -166,7 +171,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 3) {
     ?>
 
     <form action="crearTarea.php?paso=4" method="post">
-        <h1>Formulario de Gestión de Tareas: SUBIDA DE DATOS</h1>
+        <h1>Formulario de Gestión de Tareas: 3/4 </h1>
         <!--INSERCIÓN DE LA TAREA ESPECÍFICA PARA ESE USUARIO CON LOS DATOS DEFINIDOS HASTA AHORA-->
 
         <fieldset class="datosTarea">
@@ -186,6 +191,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 3) {
         <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
         <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
         <input type="hidden" name="turno" value="<?php echo $turno; ?>">
+        <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
         <input type="hidden" name="categoria" value="<?php echo $categoria; ?>">
         <input type="hidden" name="subcategoria" value="<?php echo $subcategoria; ?>">
     </form>
@@ -215,3 +221,102 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
 
 }
 ?>
+<?php
+if (isset($_GET['paso']) && $_GET['paso'] == 4) {
+    $categoria = $_POST['categoria'];
+    $subcategoria = $_POST['subcategoria'];
+    $turno = $_POST['turno'];
+    $nombre_usuario = $_POST['nombre_usuario'];
+    $correo_usuario = $_POST['correo_usuario'];
+    ?>
+
+    <h1>Formulario de Gestión de Tareas: 4/4</h1>
+    <button type="button" onclick="generarPDF()">Generar PDF</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function toggleExtracurriculares(show) {
+            document.getElementById('extracurriculares_detalle').classList.toggle('hidden', !show);
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const nombre_usuario = "<?php echo $nombre_usuario; ?>";
+            const categoria = "<?php echo $categoria; ?>";
+            const subcategoria = "<?php echo $subcategoria; ?>";
+            const correo_usuario = "<?php echo $correo_usuario; ?>";
+            const turno = "<?php echo $turno; ?>";
+
+            // Título centrado y subrayado
+            const titulo = `Rutinas (${nombre_usuario})`;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const textWidth = doc.getTextWidth(titulo);
+            const xPos = (pageWidth - textWidth) / 2;
+            doc.text(titulo, xPos, 10);
+            doc.setLineWidth(0.5);
+            doc.line(xPos, 12, xPos + textWidth, 12);
+
+            // Espacio adicional entre el título y la información del usuario
+            const yOffset = 30;
+            const lineHeight = 10; // Altura de cada línea
+
+            // Información del usuario con suficiente espacio entre líneas
+            let currentY = 10 + yOffset;
+            doc.text(`Nombre: ${nombre_usuario}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`Correo: ${correo_usuario}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`Categoria: ${categoria}`, 10, currentY);
+            currentY += lineHeight;
+            doc.text(`Subcategoria: ${subcategoria}`, 10, currentY);
+            currentY += lineHeight;
+            
+            // Función para dibujar cuadrados
+            function drawSquare(doc, x, y, size) {
+                doc.rect(x, y, size, size);
+            }
+
+            // Secciones de la rutina con cuadrados
+            const sectionYOffset = currentY + 30;
+            const squareSize = 5; // Tamaño del cuadrado
+
+            // Mañana
+            doc.text('Mañana (6:00 - 12:00)', 10, sectionYOffset);
+            drawSquare(doc, 10, sectionYOffset + 10, squareSize);
+            drawSquare(doc, 10, sectionYOffset + 20, squareSize);
+
+            // Tarde
+            doc.text('Tarde (12:00 - 19:00)', 10, sectionYOffset + 40);
+            drawSquare(doc, 10, sectionYOffset + 50, squareSize);
+            drawSquare(doc, 10, sectionYOffset + 60, squareSize);
+
+            // Noche
+            doc.text('Noche (19:00 - 24:00)', 10, sectionYOffset + 80);
+            drawSquare(doc, 10, sectionYOffset + 90, squareSize);
+            drawSquare(doc, 10, sectionYOffset + 100, squareSize);
+
+            // Asignar la actividad extracurricular a la sección correspondiente
+            if(turno == 'Mañana') {
+                doc.text(`Tarea: ${categoria} --> (${subcategoria})`, 10, sectionYOffset + 35);
+            } else if (turno == 'Tarde') {
+                doc.text(`Tarea: ${categoria} --> (${subcategoria})`, 10, sectionYOffset + 75);
+            } else if (turno == 'Noche') {
+                doc.text(`Tarea: ${categoria} --> (${subcategoria})`, 10, sectionYOffset + 115);
+            }
+
+            // Guardar el archivo como "nombre_rutina.pdf"
+            doc.save(`${nombre_usuario}_rutina.pdf`);
+        }
+    </script>
+
+    <?php
+}
+?>
+
+</body>
+</html>
+
+
+        
