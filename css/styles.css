@@ -1,0 +1,172 @@
+@font-face {
+    font-family: lexend;
+    src: url(../fonts/Lexend-VariableFont_wght.ttf);
+}
+*{
+    font-family: lexend;
+}
+.caratula{
+    font-size: 20px;
+    margin: 0 auto;
+    text-align: center;
+}.caratula img{
+    margin-top: 10px;
+}.caratula h2{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+    background-color: rgb(0, 255, 0);
+}
+.caratula b{
+    background-color: rgb(106, 168, 79);
+}
+.contDatos{
+    text-align: center;
+}
+.caratula .datos{
+    font-size: 20px;
+    text-align: left;
+    display: inline-block;
+}
+
+.aclaracion{
+    display: inline-block;
+    background-color: black;
+    color: white;
+    border-radius: 15px 15px 15px 15px;
+    border: 10px black solid;
+    text-align: center;
+    width: 510px;
+}
+.contAclaracion{
+    text-align: center;
+}
+.respuesta{
+    width: 1000px;
+    display: inline-block;
+    text-align: left;
+
+/*(1)Paradigma Orientado a Objetos, (4)Atributos y (3) Clase*/
+}.contRespuesta:nth-child(1) .respuesta img{
+    float: left;
+    border: solid 2px green;
+    margin: 10px;
+}
+/*-----------------------------*/
+/*(2)Objeto*/
+.contRespuesta:nth-child(5) .respuesta img{
+    display: block;
+    margin: 10px auto;
+}
+/*-----------------------------*/
+
+
+.contRespuesta{
+    text-align: center;
+}.respuesta .bx-right-arrow-alt{
+    font-size: 15px;
+    background-color: rgb(0, 255, 0);
+}.contRespuesta:nth-child(9) .respuesta img{
+    float: none;
+    align-items: center;
+}.contRespuesta:nth-child(9) .respuesta{
+    text-align: none;
+}div.contImg{
+    display: block;
+    margin: 10px auto;
+}
+.textoCentrado{
+    margin-right: 30px;
+    float: left;
+    margin: auto 20px 15px 60px;
+}
+.textoCentrado:nth-of-type(2){
+    margin: auto -55px 15px 60px
+}
+p {
+    margin-top: 130px;
+}
+
+/*-----------------------------*/
+/*(7)Herencia*/
+.contRespuesta:nth-child(11) .respuesta img{
+    display: block;
+    margin: 10px auto;
+}
+.textoCentrado:nth-of-type(4){
+    margin: auto -515px 15px 60px
+}
+/*-----------------------------*/
+
+/*-----------------------------*/
+/*(9)Polimorfismo*/
+.contRespuesta:nth-child(14) .contAclaracion:nth-of-type(1) .aclaracion{
+    border-radius: 0%;
+    border: 0px;
+    color: black;
+    background-color: yellow;
+}
+.contRespuesta:nth-child(14) .respuesta img{
+    display: block;
+    margin: 10px auto;
+}
+.contRespuesta:nth-child(14) .respuesta img:nth-child(2){
+    display: block;
+    margin: 10px auto;
+}
+.bxs-error{
+    color: yellow;
+    font-size: 20px;
+    background-color: black;
+}
+.contRespuesta:nth-child(14) .respuesta .bx-right-arrow-alt{
+    background-color: white;
+}.contRespuesta:nth-child(14) .datos .contDatos .datos {
+    float: left;
+}.contRespuesta:nth-child(14) .datos .contDatos .datos li:nth-child(1){
+    float: left;
+}.contRespuesta:nth-child(14) .datos .contDatos .datos li:nth-child(2){
+    margin-top: 25px;
+}.contRespuesta:nth-child(14) .datos .contDatos{
+    margin: auto 20px auto 250px;
+}.contRespuesta:nth-child(14) .respuesta .textoCentrado{
+    margin-right: 30px;
+    float: left;
+    margin: auto 20px 15px 60px;
+}
+/*-----------------------------*/
+
+/*-------------------*/
+/*(8)Encapsulamiento*/
+.contRespuesta:nth-child(17) .respuesta img:nth-child(5){
+    float: left;
+    margin: 10px 12px auto;
+}
+.contRespuesta:nth-child(17) .respuesta .contImg img:nth-child(1){
+    display: block;
+    margin: 10px auto;
+}
+/*-----------------------------*/
+
+/*-----------------------------*/
+/*(6)Abstracción*/
+.contRespuesta:nth-child(20) .respuesta img{
+    float: left;
+    margin: auto 10px auto auto;
+}
+/*-----------------------------*/
+
+/*---------------*/
+/*(10)Asociación*/
+.contRespuesta:nth-child(23) .respuesta .contImg img{
+    display: block;
+    margin: 10px auto;
+}
+/*-----------------------------*/
+/*---------------*/
+/*(11)Agregación*/
+.contRespuesta:nth-child(25) .respuesta img{
+    display: block;
+    margin: 10px auto;
+}
+/*-----------------------------*/
