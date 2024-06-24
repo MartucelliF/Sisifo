@@ -128,14 +128,34 @@ include ("conexion.php");
             ?>
                 <h1 style="color: green;"> EL USUARIO "<?php echo $nombre_usuario ?>" ACCEDIÓ EXITOSAMENTE</h2>
                     <audio src="../audio/epic.mp3" autoplay></audio>
+
                     <?php
+                    //CONSULTA PARA OBTENER SU 'EXP' Y 'NIVEL'
+                    $consultaEXP = "SELECT EXP FROM usuarios WHERE nombre_usuario='$nombre_usuario';";
+                    $consultaEXP = mysqli_query($conexion, $consultaEXP);
+                    $consultaEXP = mysqli_fetch_row($consultaEXP);
+                    $EXP_usuario = $consultaEXP[0];
+
+                    echo "<b>EXP</b>=" .$EXP_usuario;
+
+                    $consultaNIVEL = "SELECT NIVEL FROM usuarios WHERE nombre_usuario='$nombre_usuario';";
+                    $consultaNIVEL = mysqli_query($conexion, $consultaNIVEL);
+                    $consultaNIVEL = mysqli_fetch_row($consultaNIVEL);
+                    $NIVEL_usuario = $consultaNIVEL[0];
+
+                    echo "<br><br>"."<b>NIVEL</b>=" .$NIVEL_usuario;
+
+
+                    echo "<br><br>";
+
+                    //CONSULTA PARA OBTENER LAS TAREAS DE ESE USUARIO
                     $consultalistaTareas = "SELECT * FROM rutinaview WHERE nombre_usuario='$nombre_usuario'";
                     $consultalistaTareas = mysqli_query($conexion, $consultalistaTareas);
 
                     if (mysqli_num_rows($consultalistaTareas) == 0) {
 
                         ?>NO TIENE TAREAS REGISTRADAS.<br>
-                        <form action="crearTarea.php?paso=0" method="post">
+                        <form action="gestionTareas.php?paso=0" method="post">
                             <input type="submit" name="comun2" value="¿Le gustaría crear tareas?">
                             <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
                             <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
@@ -172,7 +192,7 @@ include ("conexion.php");
                                                 <td><?php echo $listaTareas[$i]['turno']; ?></td>
                                                 <td><?php echo $listaTareas[$i]['estado']; ?></td>
                                                 <td>
-                                                    <form action="crearTarea.php?paso=6" method="post">
+                                                    <form action="gestionTareas.php?paso=6" method="post">
                                                         <input type="submit" name="" value="Completar"><i class='bx bx-check'></i></input>
                                                         <input type="hidden" name="id_tarea"
                                                             value="<?php echo $listaTareas[$i]['id_tarea']; ?>">
@@ -196,7 +216,7 @@ include ("conexion.php");
                                     </tbody>
                                 </table>
 
-                                <form action="crearTarea.php?paso=0" method="post">
+                                <form action="gestionTareas.php?paso=0" method="post">
                                     <input type="submit" name="comun2" value="+">
                                     <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
                                     <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
@@ -234,7 +254,7 @@ include ("conexion.php");
                                 //-----------------------------------------------------------------------------
                                 ?>
                                 <br>
-                                <form action="crearTarea.php?paso=5" method="post">
+                                <form action="gestionTareas.php?paso=5" method="post">
                                     <input type="submit" name="comun2" value="Generar PDF">
                                     <input type="hidden" name="subcategoria" value="<?php echo $subcategoria; ?>">
                                     <input type="hidden" name="turno" value="<?php echo $turno; ?>">
