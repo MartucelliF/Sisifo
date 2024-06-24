@@ -4,9 +4,7 @@ body{
 
 }
 
-form{
-    float: right;
-}
+
 .centrar{
     text-align: center;
 }.centrar form{
@@ -21,4 +19,7 @@ table{
 }table td,th{
     border: black solid 2px;
     text-align: center;
+}
+.bx-check{
+    font-size: 20px;
 }

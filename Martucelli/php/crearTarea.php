@@ -188,12 +188,12 @@ if (isset($_GET['paso']) && $_GET['paso'] == 3) {
         </fieldset>
         <br>
         <input type="submit" name="tarea" value="Subir tarea">
-        <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
-        <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-        <input type="hidden" name="turno" value="<?php echo $turno; ?>">
-        <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
         <input type="hidden" name="categoria" value="<?php echo $categoria; ?>">
         <input type="hidden" name="subcategoria" value="<?php echo $subcategoria; ?>">
+        <input type="hidden" name="turno" value="<?php echo $turno; ?>">
+        <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
+        <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
+        <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
     </form>
 
 <?php
@@ -206,7 +206,8 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
     $turno = $_POST['turno'];
     $nombre_usuario = $_POST['nombre_usuario'];
     $id_usuario = $_POST['id_usuario'];
-    
+    $correo_usuario = $_POST['correo_usuario'];
+
     //Consulto por el 'id_subcategoria' para lograr la referencia entre las tablas
     $id_subcategoria = "SELECT id_subcategoria FROM subcategorias WHERE nombre_subcategoria='$subcategoria';";
     $id_subcategoria = mysqli_query($conexion, $id_subcategoria);
@@ -222,7 +223,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
 }
 ?>
 <?php
-if (isset($_GET['paso']) && $_GET['paso'] == 4) {
+if (isset($_GET['paso']) && $_GET['paso'] == 5) {
     $categoria = $_POST['categoria'];
     $subcategoria = $_POST['subcategoria'];
     $turno = $_POST['turno'];
@@ -243,11 +244,11 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            const nombre_usuario = "<?php echo $nombre_usuario; ?>";
-            const categoria = "<?php echo $categoria; ?>";
-            const subcategoria = "<?php echo $subcategoria; ?>";
-            const correo_usuario = "<?php echo $correo_usuario; ?>";
-            const turno = "<?php echo $turno; ?>";
+            var nombre_usuario = "<?php echo $nombre_usuario; ?>";
+            var categoria = "<?php echo $categoria; ?>";
+            var subcategoria = "<?php echo $subcategoria; ?>";
+            var correo_usuario = "<?php echo $correo_usuario; ?>";
+            var turno = "<?php echo $turno; ?>";
 
             // Título centrado y subrayado
             const titulo = `Rutinas (${nombre_usuario})`;
@@ -267,10 +268,6 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
             doc.text(`Nombre: ${nombre_usuario}`, 10, currentY);
             currentY += lineHeight;
             doc.text(`Correo: ${correo_usuario}`, 10, currentY);
-            currentY += lineHeight;
-            doc.text(`Categoria: ${categoria}`, 10, currentY);
-            currentY += lineHeight;
-            doc.text(`Subcategoria: ${subcategoria}`, 10, currentY);
             currentY += lineHeight;
             
             // Función para dibujar cuadrados
@@ -297,20 +294,67 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
             drawSquare(doc, 10, sectionYOffset + 90, squareSize);
             drawSquare(doc, 10, sectionYOffset + 100, squareSize);
 
-            // Asignar la actividad extracurricular a la sección correspondiente
-            if(turno == 'Mañana') {
-                doc.text(`Tarea: ${categoria} --> (${subcategoria})`, 10, sectionYOffset + 35);
-            } else if (turno == 'Tarde') {
-                doc.text(`Tarea: ${categoria} --> (${subcategoria})`, 10, sectionYOffset + 75);
-            } else if (turno == 'Noche') {
-                doc.text(`Tarea: ${categoria} --> (${subcategoria})`, 10, sectionYOffset + 115);
-            }
+            // Variables de control de altura
+            let currentYOffsetMorning = sectionYOffset + 10;
+            let currentYOffsetAfternoon = sectionYOffset + 50;
+            let currentYOffsetNight = sectionYOffset + 90;
 
+            // Obtener las tareas
+            <?php
+            $consultaTareas = "SELECT DISTINCT rutinaview.id_tarea, rutinaview.nombre_subcategoria, rutinaview.turno, nombre_categoria FROM rutinaview, categorias, subcategorias, tareas WHERE nombre_usuario='$nombre_usuario' && categorias.id_categoria = subcategorias.id_categoria && subcategorias.id_categoria = tareas.id_subcategoria;";
+            $result = mysqli_query($conexion, $consultaTareas);
+
+            $result = mysqli_query($conexion, $consultaTareas);
+            if ($result && mysqli_num_rows($result) > 0) {
+                while ($fila = mysqli_fetch_assoc($result)) {
+                    $categoria_tarea = $fila['nombre_categoria'];
+                    $subcategoria_tarea = $fila['nombre_subcategoria'];
+                    $turno_tarea = $fila['turno'];
+                    ?>
+                    if (`<?php echo $turno_tarea; ?>` === 'Mañana') {
+                        doc.text(`Tarea: <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)`, 10, currentYOffsetMorning);
+                        currentYOffsetMorning += lineHeight;
+                    } else if (`<?php echo $turno_tarea; ?>` === 'Tarde') {
+                        doc.text(`Tarea: <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)`, 10, currentYOffsetAfternoon);
+                        currentYOffsetAfternoon += lineHeight;
+                    } else if (`<?php echo $turno_tarea; ?>` === 'Noche') {
+                        doc.text(`Tarea: <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)`, 10, currentYOffsetNight);
+                        currentYOffsetNight += lineHeight;
+                    }
+                    <?php
+                }
+            }
+            ?>
             // Guardar el archivo como "nombre_rutina.pdf"
             doc.save(`${nombre_usuario}_rutina.pdf`);
+            
         }
+        
     </script>
 
+    <?php
+}
+if (isset($_GET['paso']) && $_GET['paso'] == 6) {
+    $id_tarea = $_POST['id_tarea'];
+    $nombre_subcategoria = $_POST['nombre_subcategoria'];
+    $turno = $_POST['turno'];
+    $estado = $_POST['estado'];
+    $nombre_usuario = $_POST['nombre_usuario'];
+    $correo_usuario = $_POST['correo_usuario'];
+    echo "<br><br>";
+    echo "CONECTADO PAPU";
+    
+    $setCompletada = "UPDATE rutinaview SET estado = 'COMPLETADA' WHERE id_tarea = $id_tarea;";
+    $setCompletada = mysqli_query($conexion,$setCompletada);
+    
+    echo $nombre_usuario;
+    echo $correo_usuario;
+
+    $crearTareaphpSESION = 1;
+
+    $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION) . "#redirigirSesion";
+    ?>
+    <meta http-equiv="refresh" content="5;url=<?php echo $redirect_url; ?>" />
     <?php
 }
 ?>
