@@ -82,7 +82,7 @@ include ("conexion.php");
 
 
     //1° Guardo las consultas en variables
-//Para el INICIO DE SESIÓN me tengo que asegurar que tanto el 'nombre_usuario' como 'correo_usuario' coincidan con el de un usuario
+    //Para el INICIO DE SESIÓN me tengo que asegurar que tanto el 'nombre_usuario' como 'correo_usuario' coincidan con el de un usuario
     $iniciosesionConsulta = "SELECT * FROM usuarios WHERE nombre_usuario = '$nombre_usuario' && correo_usuario = '$correo_usuario'";
     //Para el REGISTRO me tengo que asegurar que el 'nombre_usuario' NI el 'correo_usuario' pertenezcan ya a algún usuario
     $registroConsulta = "SELECT * FROM usuarios WHERE nombre_usuario = '$nombre_usuario' || correo_usuario = '$correo_usuario'";
@@ -262,6 +262,7 @@ include ("conexion.php");
                                     <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
                                     <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
                                 </form>
+                                <a href="../apiCalendar/index.php"><button>Google Calendar</button></a>
                                 <!--------------------------------->
             </div>
             <?php

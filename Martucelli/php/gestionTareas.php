@@ -242,6 +242,9 @@ if (isset($_GET['paso']) && $_GET['paso'] == 5) {
 
     <h1>Formulario de Gestión de Tareas: 4/4</h1>
     <button type="button" onclick="generarPDF()">Generar PDF</button>
+    <div id="pdf-preview" style="margin-top: 20px;">
+        <!-- The PDF preview will be displayed here -->
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
@@ -249,7 +252,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 5) {
             document.getElementById('extracurriculares_detalle').classList.toggle('hidden', !show);
         }
 
-        function generarPDF() {
+        async function generarPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
@@ -310,10 +313,9 @@ if (isset($_GET['paso']) && $_GET['paso'] == 5) {
 
             // Obtener las tareas
             <?php
-            $consultaTareas = "SELECT DISTINCT rutinaview.id_tarea, rutinaview.nombre_subcategoria, rutinaview.turno, nombre_categoria FROM rutinaview, categorias, subcategorias, tareas WHERE nombre_usuario='$nombre_usuario' && categorias.id_categoria = subcategorias.id_categoria && subcategorias.id_categoria = tareas.id_subcategoria;";
+            $consultaTareas = "SELECT * FROM rutinaview WHERE nombre_usuario = '$nombre_usuario'";
             $result = mysqli_query($conexion, $consultaTareas);
 
-            $result = mysqli_query($conexion, $consultaTareas);
             if ($result && mysqli_num_rows($result) > 0) {
                 while ($fila = mysqli_fetch_assoc($result)) {
                     $categoria_tarea = $fila['nombre_categoria'];
@@ -334,11 +336,22 @@ if (isset($_GET['paso']) && $_GET['paso'] == 5) {
                 }
             }
             ?>
-            // Guardar el archivo como "nombre_rutina.pdf"
-            doc.save(`${nombre_usuario}_rutina.pdf`);
-            
+
+            // Obtener el blob del PDF
+            const pdfBlob = doc.output('blob');
+
+            // Crear una URL para el blob y mostrarla en un iframe
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '500px';
+            iframe.src = pdfUrl;
+
+            // Limpiar cualquier previsualización anterior y agregar la nueva
+            const pdfPreviewDiv = document.getElementById('pdf-preview');
+            pdfPreviewDiv.innerHTML = '';
+            pdfPreviewDiv.appendChild(iframe);
         }
-        
     </script>
 
     <?php
@@ -350,26 +363,44 @@ if (isset($_GET['paso']) && $_GET['paso'] == 6) {
     $estado = $_POST['estado'];
     $nombre_usuario = $_POST['nombre_usuario'];
     $correo_usuario = $_POST['correo_usuario'];
-    echo "<br><br>";
-    echo "CONECTADO PAPU";
+
     
-    $setCompletada = "UPDATE rutinaview SET estado = 'COMPLETADA' WHERE id_tarea = $id_tarea;";
-    $setCompletada = mysqli_query($conexion,$setCompletada);
-    
-    echo $nombre_usuario;
-    echo $correo_usuario;
-
-    $crearTareaphpSESION = 1;
-
-    $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION) . "#redirigirSesion";
-    ?>
-    <meta http-equiv="refresh" content="2;url=<?php echo $redirect_url; ?>" />
-    <audio src="../audio/experiencia.mp3" autoplay></audio>
-    <?php
-
     //CONSULTA PARA SUMARLE LA EXP y NIVEL AL USUARIO POR HABER 'COMPLETADO' LA TAREA
-    $AsignarEXPyNIVEL = "UPDATE usuarios SET EXP=usuarios.EXP+50,NIVEL=usuarios.EXP/100 WHERE nombre_usuario='$nombre_usuario';";
-    $AsignarEXPyNIVEL = mysqli_query($conexion,$AsignarEXPyNIVEL);
+    if($estado == 'PENDIENTE'){
+        $AsignarEXPyNIVEL = "UPDATE usuarios SET EXP=usuarios.EXP+50,NIVEL=usuarios.EXP/100 WHERE nombre_usuario='$nombre_usuario';";
+        $AsignarEXPyNIVEL = mysqli_query($conexion,$AsignarEXPyNIVEL);
+        echo "<br><br>";
+        echo "CONECTADO PAPU";
+        
+        $setCompletada = "UPDATE rutinaview SET estado = 'COMPLETADA' WHERE id_tarea = $id_tarea;";
+        $setCompletada = mysqli_query($conexion,$setCompletada);
+        
+        echo $nombre_usuario;
+        echo $correo_usuario;
+
+        $crearTareaphpSESION = 1;
+
+        $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION) . "#redirigirSesion";
+        ?>
+        <audio src="../audio/experiencia.mp3" autoplay></audio>
+        <meta http-equiv="refresh" content="2;url=<?php echo $redirect_url; ?>" />
+
+        <?php
+        
+    }else {
+        $crearTareaphpSESION = 1;
+
+        $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION) . "#redirigirSesion";
+
+        ?>
+            <h3 style="color: red">
+                ¡TE ATRAPAMOS SANDIJUELA ESCURRIDIZA!<br>
+                No puedes conseguir más experiencia de esta tarea. 
+                <meta http-equiv="refresh" content="2;url=<?php echo $redirect_url; ?>" />
+            </h3>
+        <?php
+    }
+        
 
 }
 ?>

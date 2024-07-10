@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-06-2024 a las 01:25:20
+-- Tiempo de generación: 10-07-2024 a las 17:42:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -79,6 +79,7 @@ CREATE TABLE `respuestas` (
 CREATE TABLE `rutinaview` (
 `id_tarea` int(10)
 ,`nombre_usuario` varchar(20)
+,`nombre_categoria` varchar(50)
 ,`nombre_subcategoria` varchar(30)
 ,`turno` varchar(20)
 ,`estado` varchar(20)
@@ -121,7 +122,7 @@ INSERT INTO `subcategorias` (`id_subcategoria`, `id_categoria`, `nombre_subcateg
 (18, 7, 'Derecho'),
 (19, 8, 'Estudiar Freud'),
 (20, 8, 'Pasear a Lari'),
-(21, 8, 'Llamar a Fran sin fijarme sus '),
+(21, 8, 'Llamar a Fran sin fijarme sush'),
 (22, 8, 'Cuidar a Memilittt'),
 (23, 8, 'Hacer tistos'),
 (24, 8, 'Crear un mundo en Minecraft'),
@@ -146,23 +147,21 @@ CREATE TABLE `tareas` (
 --
 
 INSERT INTO `tareas` (`id_tarea`, `id_usuario`, `id_subcategoria`, `turno`, `estado`) VALUES
-(1, 21, 16, 'Tarde', 'PENDIENTE'),
-(6, 21, 8, 'Mediodía', 'PENDIENTE'),
-(7, 26, 5, 'Mañana', 'PENDIENTE'),
-(8, 27, 1, 'Mañana', 'PENDIENTE'),
-(9, 27, 3, 'Mediodía', 'PENDIENTE'),
-(10, 26, 11, 'Noche', 'PENDIENTE'),
-(11, 26, 13, 'Noche', 'PENDIENTE'),
-(12, 14, 8, 'Tarde', 'PENDIENTE'),
-(13, 14, 8, 'Tarde', 'PENDIENTE'),
-(14, 14, 8, 'Tarde', 'PENDIENTE'),
-(15, 14, 8, 'Tarde', 'PENDIENTE'),
-(16, 14, 8, 'Tarde', 'PENDIENTE'),
-(17, 14, 8, 'Tarde', 'PENDIENTE'),
-(18, 14, 1, 'Mañana', 'PENDIENTE'),
-(19, 28, 8, 'Tarde', 'PENDIENTE'),
-(20, 30, 15, 'Noche', 'PENDIENTE'),
-(21, 30, 14, 'Mediodía', 'PENDIENTE');
+(36, 36, 1, 'Mañana', 'PENDIENTE'),
+(59, 47, 8, 'Noche', 'COMPLETADA'),
+(60, 47, 8, 'Noche', 'COMPLETADA'),
+(61, 47, 11, 'Tarde', 'COMPLETADA'),
+(62, 47, 11, 'Tarde', 'PENDIENTE'),
+(63, 47, 11, 'Tarde', 'PENDIENTE'),
+(77, 46, 1, 'Mañana', 'PENDIENTE'),
+(78, 46, 4, 'Mañana', 'PENDIENTE'),
+(79, 46, 6, 'Mañana', 'PENDIENTE'),
+(80, 46, 11, 'Mañana', 'PENDIENTE'),
+(81, 46, 12, 'Mañana', 'PENDIENTE'),
+(84, 36, 6, 'Mediodía', 'PENDIENTE'),
+(85, 36, 12, 'Mañana', 'PENDIENTE'),
+(86, 36, 12, 'Noche', 'PENDIENTE'),
+(87, 36, 2, 'Mañana', 'PENDIENTE');
 
 -- --------------------------------------------------------
 
@@ -173,27 +172,24 @@ INSERT INTO `tareas` (`id_tarea`, `id_usuario`, `id_subcategoria`, `turno`, `est
 CREATE TABLE `usuarios` (
   `id_usuario` int(10) NOT NULL,
   `nombre_usuario` varchar(20) NOT NULL,
-  `correo_usuario` varchar(20) NOT NULL
+  `correo_usuario` varchar(50) NOT NULL,
+  `EXP` int(100) DEFAULT NULL,
+  `NIVEL` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `correo_usuario`) VALUES
-(11, 'lolete', 'pepe_joestar@gmail.c'),
-(14, 'asd', 'asd2@gmail.com'),
-(16, 'lolete334', 'pepe_joestar@gmail.c'),
-(17, 'papu', 'doupapu@gmail.com'),
-(18, 'Sebita00', 'loelteSeba@gmail.com'),
-(19, 'Lolete00', 'asds2@gmail.com'),
-(20, 'Lolete02', 'asds5@gmail.com'),
-(21, 'Lolete011', 'asds52@gmail.com'),
-(26, 'Sebita', 'pepe_joestar@gmail.c'),
-(27, 'Saitam23a', 'pepe_joestar@gmail.c'),
-(28, 'Lunita', 'lunitaBrother@gmail.'),
-(29, 'Sebita01', 'seba.fernandez.laula'),
-(30, 'Sebita02', 'seba.fernandez.laula');
+INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `EXP`, `NIVEL`) VALUES
+(36, 'asd', 'asd@gmail.com', 0, 0),
+(38, 'asd2', 'asd2@gmail.com', 0, 0),
+(39, 'lolete334', 'asd672@gmail.com', 0, 0),
+(40, 'lolet2e334', 'asd6722@gmail.com', 0, 0),
+(45, 'Martu', 'martucellifranco15@gmail.com', 0, 0),
+(46, 'Lolete', 'lolete@gmail.com', 250, 2.5),
+(47, 'lolete02', 'asd12@gmail.com', 150, 1.5),
+(48, 'juja', 'juja@gmail.com', 100, 1);
 
 -- --------------------------------------------------------
 
@@ -202,7 +198,7 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `correo_usuario`) VALUES
 --
 DROP TABLE IF EXISTS `rutinaview`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `rutinaview`  AS SELECT `tareas`.`id_tarea` AS `id_tarea`, `usuarios`.`nombre_usuario` AS `nombre_usuario`, `subcategorias`.`nombre_subcategoria` AS `nombre_subcategoria`, `tareas`.`turno` AS `turno`, `tareas`.`estado` AS `estado` FROM ((`tareas` join `usuarios` on(`tareas`.`id_usuario` = `usuarios`.`id_usuario`)) join `subcategorias` on(`subcategorias`.`id_subcategoria` = `tareas`.`id_subcategoria`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `rutinaview`  AS SELECT `tareas`.`id_tarea` AS `id_tarea`, `usuarios`.`nombre_usuario` AS `nombre_usuario`, `categorias`.`nombre_categoria` AS `nombre_categoria`, `subcategorias`.`nombre_subcategoria` AS `nombre_subcategoria`, `tareas`.`turno` AS `turno`, `tareas`.`estado` AS `estado` FROM (((`tareas` join `usuarios`) join `subcategorias`) join `categorias`) WHERE `tareas`.`id_usuario` = `usuarios`.`id_usuario` AND `tareas`.`id_subcategoria` = `subcategorias`.`id_subcategoria` AND `subcategorias`.`id_categoria` = `categorias`.`id_categoria` ;
 
 --
 -- Índices para tablas volcadas
@@ -281,13 +277,13 @@ ALTER TABLE `subcategorias`
 -- AUTO_INCREMENT de la tabla `tareas`
 --
 ALTER TABLE `tareas`
-  MODIFY `id_tarea` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_tarea` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id_usuario` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- Restricciones para tablas volcadas
