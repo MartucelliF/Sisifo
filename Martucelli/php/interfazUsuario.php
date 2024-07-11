@@ -262,7 +262,10 @@ include ("conexion.php");
                                     <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
                                     <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
                                 </form>
+                                <br>
+                                <a href="../apiGmail/index.php"><button>Google Gmail</button></a>
                                 <a href="../apiCalendar/index.php"><button>Google Calendar</button></a>
+
                                 <!--------------------------------->
             </div>
             <?php
