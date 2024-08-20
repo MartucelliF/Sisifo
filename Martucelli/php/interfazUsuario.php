@@ -7,12 +7,18 @@ include ("conexion.php");
 
 //CONTROL DE SESIONES
 //---------------------------------------------------------------------------------------------------
-    $crearTareaphpSESION = isset($_GET['crearTareaphpSESION']) ? $_GET['crearTareaphpSESION'] : 0;
     //En caso de que traiga los datos desde el paso=6 de 'crearTarea.php' desde la URL
-    if($crearTareaphpSESION == 1){
+    $crearTareaphpSESION = isset($_GET['crearTareaphpSESION']) ? $_GET['crearTareaphpSESION'] : 0;
+    //En caso de que traiga los datos desde el inicio de sesión exitoso de 'apiGmail.php' desde la URL
+    $apiGmailSESION = isset($_GET['apiGmailSESION']) ? $_GET['apiGmailSESION'] : 0;
+    //En caso de que traiga los datos desde el inicio de sesión exitoso de 'apiCalendar.php' desde la URL
+    $apiCalendarSESION = isset($_GET['apiCalendarSESION']) ? $_GET['apiCalendarSESION'] : 0;
+
+    if($crearTareaphpSESION == 1 || $apiGmailSESION == 1 || $apiCalendarSESION == 1){
         $nombre_usuario = isset($_GET['nombre_usuario']) ? $_GET['nombre_usuario'] : '';
         $correo_usuario = isset($_GET['correo_usuario']) ? $_GET['correo_usuario'] : '';
-    }else{
+    }
+    else{
         //En caso de que sólo esté Iniciando Sesión. Los toma directamente desde el form
         $nombre_usuario = $_POST["nombre_usuario"];//las variables van a almacenar el valor que recupera "POST" del valor del formulario
         $correo_usuario = $_POST["correo_usuario"];
@@ -190,7 +196,12 @@ include ("conexion.php");
                                                 <td><?php echo $listaTareas[$i]['id_tarea']; ?></td>
                                                 <td><?php echo $listaTareas[$i]['nombre_subcategoria']; ?></td>
                                                 <td><?php echo $listaTareas[$i]['turno']; ?></td>
-                                                <td><?php echo $listaTareas[$i]['estado']; ?></td>
+                                                <td><?php if ($listaTareas[$i]['estado'] == 'COMPLETADA') {
+                                                                        echo '<b style="color: rgb(41, 250, 41); background-color: black;">' . htmlspecialchars($listaTareas[$i]['estado']) . '</b>';
+                                                                    } else {
+                                                                        echo '<b style="color: red; background-color: black;">' . htmlspecialchars($listaTareas[$i]['estado']);
+                                                                    }
+                                                                ?></td>
                                                 <td>
                                                     <form action="gestionTareas.php?paso=6" method="post">
                                                         <input type="submit" name="" value="Completar"><i class='bx bx-check'></i></input>
@@ -199,10 +210,7 @@ include ("conexion.php");
                                                         <input type="hidden" name="nombre_subcategoria"
                                                             value="<?php echo $listaTareas[$i]['nombre_subcategoria']; ?>">
                                                         <input type="hidden" name="turno" value="<?php echo $listaTareas[$i]['turno']; ?>">
-                                                        <input type="hidden" name="estado"
-                                                            value="<?php echo $listaTareas[$i]['estado']; ?>">
-                                                        <input type="hidden" name="estado"
-                                                            value="<?php echo $listaTareas[$i]['estado']; ?>">
+                                                        <input type="hidden" name="estado" value="<?php echo $listaTareas[$i]['estado']; ?>">
                                                         <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
                                                         <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
                                                     </form>
@@ -263,12 +271,20 @@ include ("conexion.php");
                                     <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
                                 </form>
                                 <br>
-                                <a href="../apiGmail/index.php"><button>Google Gmail</button></a>
-                                <a href="../apiCalendar/index.php"><button>Google Calendar</button></a>
+                                <form action="../apiGmail/index.php?recibedatos=1">
+                                    <input type="submit" name="comun2" value="Google Gmail">
+                                    <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
+                                    <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
+                                </form>    
+                                <form action="../apiCalendar/index.php?recibedatos=1">
+                                    <input type="submit" name="comun2" value="Google Calendar">
+                                    <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
+                                    <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
+                                </form>  
 
                                 <!--------------------------------->
-            </div>
-            <?php
+                    </div>
+                    <?php
                     }
         }
     }
