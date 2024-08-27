@@ -4,6 +4,7 @@ include("conexion.php");
 $nombre_usuario = $_POST["nombre_usuario"];//las variables van a almacenar el valor que recupera "POST" del valor del formulario
 $correo_usuario = $_POST["correo_usuario"];
 
+
 echo $correo_usuario;
 ?>
 
