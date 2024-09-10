@@ -1,9 +1,11 @@
 <?php
 
 include("conexion.php");
-$nombre_usuario = $_POST["nombre_usuario"];//las variables van a almacenar el valor que recupera "POST" del valor del formulario
-$correo_usuario = $_POST["correo_usuario"];
 
+session_start(); // Iniciar la sesión
+
+$nombre_usuario = $_SESSION['nombre_usuario'];
+$correo_usuario = $_SESSION['correo_usuario'];
 
 echo $correo_usuario;
 ?>
@@ -30,6 +32,9 @@ if (!isset($_GET['paso']) || $_GET['paso'] == 0) {
     $id_usuario = $consultaId_Usuario[0]; /*obtengo el valor específicamente de la primera fila de resultados 
     (la única que DEBERÍA haber por ser el 'nombre_usuario' ÚNICO por usuario)*/
 
+    $_SESSION['id_usuario'] = $_POST['id_usuario'];
+    $id_usuario = $_SESSION['id_usuario'];
+
     //CATEGORÍA #1
     //OBTENER EL NOMBRE DE TODAS LAS CATEGORÍAS
     $consultaOptionCategorias = "SELECT nombre_categoria FROM categorias;";
@@ -52,14 +57,15 @@ if (!isset($_GET['paso']) || $_GET['paso'] == 0) {
                 //ASOCIO EL NOMBRE DE CADA CATEGORIA A LA FILA DEL ARRAY "FILA" MEDIANTE "ASSOC"
                 while ($fila = mysqli_fetch_assoc($resultadoCategorias)) {
                     ?>
-                    <option> <?php echo $fila['nombre_categoria'] ?> </option>';
+                    <option> 
+                        <?php echo $fila['nombre_categoria'] ?> 
+                    </option>';
                     <?php
+                    $categoria = $_SESSION['categoria'];
+
                 }
                 ?>
             </select>
-            <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-            <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
-            <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
             <input type="submit" name="comun2" value="Seleccionar">
             <input type="reset" name="Limpiar" value="LIMPIAR">
             <br>
@@ -74,15 +80,13 @@ if (!isset($_GET['paso']) || $_GET['paso'] == 0) {
 }
 
 if (isset($_GET['paso']) && $_GET['paso'] == 1) {
-    $categoria = $_POST['categoria'];
-    $id_usuario = $_POST['id_usuario'];
-
-    //echo $categoria;
+    $_SESSION['categoria'] = $_POST['categoria'];
+    $categoria = $_SESSION['categoria'];
 
     // Obtener nombre de las SUBCATEGORÍAS pertenecientes a esa categoría elegida
+
     $consultaOptionSubcategorias = "SELECT nombre_subcategoria FROM subcategorias, categorias WHERE nombre_categoria='$categoria' && subcategorias.id_categoria = categorias.id_categoria;";
     $consultaOptionSubcategorias = mysqli_query($conexion, $consultaOptionSubcategorias);
-
 
     if (!$consultaOptionSubcategorias) {
         die("Error en la consulta de subcategorías: " . mysqli_error($conexion));
@@ -105,12 +109,8 @@ if (isset($_GET['paso']) && $_GET['paso'] == 1) {
                 }
                 ?>
             </select>
-            <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-            <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
-            <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
             <input type="submit" name="comun2" value="Seleccionar">
             <input type="reset" name="Limpiar" value="LIMPIAR">
-            <input type="hidden" name="categoria" value="<?php echo $categoria; ?>">
         </fieldset>
     </form>
     <?php
@@ -118,10 +118,11 @@ if (isset($_GET['paso']) && $_GET['paso'] == 1) {
 ?>
 <?php
 if (isset($_GET['paso']) && $_GET['paso'] == 2) {
-    $categoria = $_POST['categoria'];
-    $subcategoria = $_POST['subcategoria'];
-    $nombre_usuario = $_POST['nombre_usuario'];
-    $id_usuario = $_POST['id_usuario'];
+    
+    $categoria = $_SESSION['categoria'];
+
+    $_SESSION['subcategoria'] = $_POST['subcategoria'];
+    $subcategoria = $_SESSION['subcategoria'];
 
     //echo $categoria;
     //echo $subcategoria;
@@ -146,22 +147,21 @@ if (isset($_GET['paso']) && $_GET['paso'] == 2) {
             <input type="submit" name="comun2" value="Seleccionar">
             <input type="reset" name="Limpiar" value="LIMPIAR">
         </fieldset>
-        <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-        <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
-        <input type="hidden" name="categoria" value="<?php echo $categoria; ?>">
-        <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
-        <input type="hidden" name="subcategoria" value="<?php echo $subcategoria; ?>">
     </form>
 <?php
 }
 ?>
 <?php
 if (isset($_GET['paso']) && $_GET['paso'] == 3) {
-    $categoria = $_POST['categoria'];
-    $subcategoria = $_POST['subcategoria'];
-    $turno = $_POST['turno'];
-    $nombre_usuario = $_POST['nombre_usuario'];
-    $id_usuario = $_POST['id_usuario'];
+
+    $categoria = $_SESSION['categoria'];
+    $subcategoria = $_SESSION['subcategoria'];
+
+    $_SESSION['turno'] = $_POST['turno'];
+    $turno = $_SESSION['turno'];
+
+    $_SESSION['id_usuario'] = $_POST['id_usuario'];
+    $id_usuario = $_SESSION['id_usuario'];
 
     /*
     echo $categoria;
@@ -234,11 +234,12 @@ if (isset($_GET['paso']) && $_GET['paso'] == 4) {
 ?>
 <?php
 if (isset($_GET['paso']) && $_GET['paso'] == 5) {
+    // Acceder a los datos de la sesión
+
     $categoria = $_POST['categoria'];
     $subcategoria = $_POST['subcategoria'];
     $turno = $_POST['turno'];
-    $nombre_usuario = $_POST['nombre_usuario'];
-    $correo_usuario = $_POST['correo_usuario'];
+
     ?>
 
     <h1>Formulario de Gestión de Tareas: 4/4</h1>

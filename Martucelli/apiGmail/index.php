@@ -30,7 +30,7 @@ if (isset($_SESSION['user'])) {
     echo '<a href="logout.php">Cerrar sesión</a>';
 
     ?>
-    <meta http-equiv="refresh" content="5;url=../php/interfazUsuario.php" />
+    <meta http-equiv="refresh" content="5;url=../php/interfazUsuario(SESSION).php" />
     <?php
 
 } else {
