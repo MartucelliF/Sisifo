@@ -232,90 +232,76 @@ switch ($paso) {
         $_SESSION['nombre_usuario'] = $nombre_usuario; // Debe estar definido
         $_SESSION['correo_usuario'] = $correo_usuario; // Debe estar definido
 
-        header("Location: interfazUsuario.php?paso=0#redirigirSesion");
+        header("Location: interfazUsuario.php?paso=0");
 
     break;
 
     case 5:
-        $categoria = $_SESSION['categoria'];  // Ya guardado en la sesión en pasos anteriores
-        $subcategoria = $_SESSION['subcategoria'];  // Ya guardado en la sesión en pasos anteriores
-        $turno = $_SESSION['turno'];  // Ya guardado en la sesión en pasos anteriores
+
+        $categoria = $_SESSION['categoria'];
+        $subcategoria = $_SESSION['subcategoria'];
+        $turno = $_SESSION['turno'];
         $nombre_usuario = $_SESSION['usuario']['nombre'];
         $correo_usuario = $_SESSION['usuario']['correo'];
         ?>
 
-        <h1>Formulario de Gestión de Tareas: 4/4</h1>
-        <button type="button" onclick="generarPDF()">Generar PDF</button>
         <div id="pdf-preview" style="margin-top: 20px;">
-            <!-- The PDF preview will be displayed here -->
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+         <!-- Incluye la librería html2pdf -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+
         <script>
             function toggleExtracurriculares(show) {
                 document.getElementById('extracurriculares_detalle').classList.toggle('hidden', !show);
             }
 
             async function generarPDF() {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-
                 var nombre_usuario = "<?php echo $nombre_usuario; ?>";
                 var categoria = "<?php echo $categoria; ?>";
                 var subcategoria = "<?php echo $subcategoria; ?>";
                 var correo_usuario = "<?php echo $correo_usuario; ?>";
                 var turno = "<?php echo $turno; ?>";
 
-                // Título centrado y subrayado
-                const titulo = `Rutinas (${nombre_usuario})`;
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const textWidth = doc.getTextWidth(titulo);
-                const xPos = (pageWidth - textWidth) / 2;
-                doc.text(titulo, xPos, 10);
-                doc.setLineWidth(0.5);
-                doc.line(xPos, 12, xPos + textWidth, 12);
+                // Crear contenido HTML para el PDF
+                var contenidoHTML = `
+                    <div style="text-align: center;">
+                        <h1>RUTINAS (${nombre_usuario})</h1>
+                        <hr>
+                        <p><strong>NOMBRE:</strong> ${nombre_usuario}</p>
+                        <p><strong>CORREO:</strong> ${correo_usuario}</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h3>MAÑANA (6:00 - 12:00)</h3>
+                        <div style="display: flex; flex-direction: column;">
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                        </div>
+                        <hr>
+                        <h3>TARDE (12:00 - 19:00)</h3>
+                        <div style="display: flex; flex-direction: column;">
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                        </div>
+                        <hr>
+                        <h3>NOCHE (19:00 - 00:00)</h3>
+                        <div style="display: flex; flex-direction: column;">
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                            <div style="height: 5px; width: 5px; border: 1px solid black; margin-bottom: 5px;"></div>
+                        </div>
+                    </div>
+                `;
 
-                // Espacio adicional entre el título y la información del usuario
-                const yOffset = 30;
-                const lineHeight = 10; // Altura de cada línea
-
-                // Información del usuario con suficiente espacio entre líneas
-                let currentY = 10 + yOffset;
-                doc.text(`Nombre: ${nombre_usuario}`, 10, currentY);
-                currentY += lineHeight;
-                doc.text(`Correo: ${correo_usuario}`, 10, currentY);
-                currentY += lineHeight;
-                
-                // Función para dibujar cuadrados
-                function drawSquare(doc, x, y, size) {
-                    doc.rect(x, y, size, size);
-                }
-
-                // Secciones de la rutina con cuadrados
-                const sectionYOffset = currentY + 30;
-                const squareSize = 5; // Tamaño del cuadrado
-
-                // Mañana
-                doc.text('Mañana (6:00 - 12:00)', 10, sectionYOffset);
-                drawSquare(doc, 10, sectionYOffset + 10, squareSize);
-                drawSquare(doc, 10, sectionYOffset + 20, squareSize);
-
-                // Tarde
-                doc.text('Tarde (12:00 - 19:00)', 10, sectionYOffset + 40);
-                drawSquare(doc, 10, sectionYOffset + 50, squareSize);
-                drawSquare(doc, 10, sectionYOffset + 60, squareSize);
-
-                // Noche
-                doc.text('Noche (19:00 - 24:00)', 10, sectionYOffset + 80);
-                drawSquare(doc, 10, sectionYOffset + 90, squareSize);
-                drawSquare(doc, 10, sectionYOffset + 100, squareSize);
-
-                // Variables de control de altura
-                let currentYOffsetMorning = sectionYOffset + 10;
-                let currentYOffsetAfternoon = sectionYOffset + 50;
-                let currentYOffsetNight = sectionYOffset + 90;
-
-                // Obtener las tareas
+                // Reemplaza las tareas dinámicamente
                 <?php
                 $consultaTareas = "SELECT * FROM rutinaview WHERE nombre_usuario = '$nombre_usuario'";
                 $result = mysqli_query($conexion, $consultaTareas);
@@ -326,39 +312,34 @@ switch ($paso) {
                         $subcategoria_tarea = $fila['nombre_subcategoria'];
                         $turno_tarea = $fila['turno'];
                         ?>
-                        if (`<?php echo $turno_tarea; ?>` === 'Mañana') {
-                            doc.text(`Tarea: <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)`, 10, currentYOffsetMorning);
-                            currentYOffsetMorning += lineHeight;
-                        } else if (`<?php echo $turno_tarea; ?>` === 'Tarde') {
-                            doc.text(`Tarea: <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)`, 10, currentYOffsetAfternoon);
-                            currentYOffsetAfternoon += lineHeight;
-                        } else if (`<?php echo $turno_tarea; ?>` === 'Noche') {
-                            doc.text(`Tarea: <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)`, 10, currentYOffsetNight);
-                            currentYOffsetNight += lineHeight;
-                        }
+                        contenidoHTML += `<p><strong>Tarea:</strong> <?php echo $categoria_tarea; ?> --> (<?php echo $subcategoria_tarea; ?>)</p>`;
                         <?php
                     }
                 }
                 ?>
 
-                // Obtener el blob del PDF
-                const pdfBlob = doc.output('blob');
+                // Crear un blob del contenido HTML
+                const element = document.createElement('div');
+                element.innerHTML = contenidoHTML;
 
-                // Crear una URL para el blob y mostrarla en un iframe
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-                const iframe = document.createElement('iframe');
-                iframe.style.width = '100%';
-                iframe.style.height = '500px';
-                iframe.src = pdfUrl;
+                // Opciones para html2pdf
+                const options = {
+                    filename: `${nombre_usuario} - rutina.pdf`,
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
 
-                // Limpiar cualquier previsualización anterior y agregar la nueva
-                const pdfPreviewDiv = document.getElementById('pdf-preview');
-                pdfPreviewDiv.innerHTML = '';
-                pdfPreviewDiv.appendChild(iframe);
+                // Generar PDF
+                html2pdf().from(element).set(options).save();
             }
+
+            window.onload = function () {
+                generarPDF(); // Llamar a la función al cargar la página
+            };
         </script>
 
-        <?php
+
+    <?php
 
     break;
 
@@ -423,7 +404,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 6) {
 
         $crearTareaphpSESSION = 1;
 
-        $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION) . "#redirigirSesion";
+        $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION);
         ?>
         <audio src="../audio/experiencia.mp3" autoplay></audio>
         <meta http-equiv="refresh" content="2;url=<?php echo $redirect_url; ?>" />
@@ -433,7 +414,7 @@ if (isset($_GET['paso']) && $_GET['paso'] == 6) {
     }else {
         $crearTareaphpSESSION = 1;
 
-        $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION) . "#redirigirSesion";
+        $redirect_url = "interfazUsuario.php?paso=0&iniciosesionConsulta=1&consultalistaTareas=0&nombre_usuario=" . urlencode($nombre_usuario) . "&correo_usuario=" . urlencode($correo_usuario). "&crearTareaphpSESION=" . urlencode($crearTareaphpSESION);
 
         ?>
             <h3 style="color: red">

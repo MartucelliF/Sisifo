@@ -36,6 +36,16 @@ include ("conexion.php");
         }
     }
 
+    // Procesar cierre de sesión
+    if (isset($_GET['logout'])) {
+        session_start();
+        session_unset(); // Limpia todas las variables de la sesión
+        session_destroy(); // Destruye la sesión
+        setcookie(session_name(), '', time() - 3600, '/'); // Elimina la cookie de la sesión
+        header("Location: ../index.html"); // Redirigir a la página de inicio (ajusta según tu estructura)
+        exit;
+    }
+
     /*Los casos están hechos para las diferentes formas de tomar datos de cada sesión. 
     Para que no se sobreescriban los datos ni aparezcan errores 'undefined'*/
 //----------------------------------------------------------------------------------------------------
@@ -101,6 +111,9 @@ include ("conexion.php");
             $cont=+1;
 
             ?>
+            
+            <div class="centrar">
+
                 <h1 style="color: green;"> EL USUARIO "<?php echo $nombre_usuario ?>" ACCEDIÓ EXITOSAMENTE</h2>
                     
                     <?php
@@ -145,7 +158,7 @@ include ("conexion.php");
 
                     } else {
                         ?>
-                            <div id="redirigirSesion">
+                            <div class="centrar">
                                 <table>
                                     <thead>
                                         <tr>
@@ -155,97 +168,70 @@ include ("conexion.php");
                                             <th>Estado</th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
                                         <?php
-
                                         // Almacenar todas las filas en un array
                                         $listaTareas = [];
-                                        while ($fila = mysqli_fetch_assoc($consultalistaTareas)) {//automáticamente 'mysqli_fetch_assoc' define a $fila como un array que almacena de forma temporal cada fila recuperada de la consutla
-                                            $listaTareas[] = $fila;//no hace falta indicar con '$i' porque PHP automáticamente agrega cada fila a la siguiente
+                                        while ($fila = mysqli_fetch_assoc($consultalistaTareas)) {
+                                            $listaTareas[] = $fila;
                                         }
 
-                                        // Rellena las filas de la tabla con los datos obtenidos de la consulta
-                            
-                                        for ($i = 0; $i < count($listaTareas); $i++) {
+                                        // Generar las filas de la tabla
+                                        foreach ($listaTareas as $tarea) {
                                             ?>
                                             <tr>
-                                                <td><?php echo $listaTareas[$i]['id_tarea']; ?></td>
-                                                <td><?php echo $listaTareas[$i]['nombre_subcategoria']; ?></td>
-                                                <td><?php echo $listaTareas[$i]['turno']; ?></td>
-                                                <td><?php if ($listaTareas[$i]['estado'] == 'COMPLETADA') {
-                                                                        echo '<b style="color: rgb(41, 250, 41); background-color: black;">' . htmlspecialchars($listaTareas[$i]['estado']) . '</b>';
-                                                                    } else {
-                                                                        echo '<b style="color: red; background-color: black;">' . htmlspecialchars($listaTareas[$i]['estado']);
-                                                                    }
-                                                                ?></td>
+                                                <td><?php echo htmlspecialchars($tarea['id_tarea']); ?></td>
+                                                <td><?php echo htmlspecialchars($tarea['nombre_subcategoria']); ?></td>
+                                                <td><?php echo htmlspecialchars($tarea['turno']); ?></td>
+                                                <td>
+                                                    <?php 
+                                                    if ($tarea['estado'] == 'COMPLETADA') {
+                                                        echo '<b style="color: rgb(41, 250, 41); background-color: black;">' . htmlspecialchars($tarea['estado']) . '</b>';
+                                                    } else {
+                                                        echo '<b style="color: orange; background-color: black;">' . htmlspecialchars($tarea['estado']) . '</b>';
+                                                    }
+                                                    ?>
+                                                </td>
                                                 <td>
                                                     <form action="gestionTareas.php?paso=6" method="post">
-                                                        <input type="submit" name="" value="Completar"><i class='bx bx-check'></i></input>
-                                                        <input type="hidden" name="id_tarea"
-                                                            value="<?php echo $listaTareas[$i]['id_tarea']; ?>">
-                                                        <input type="hidden" name="nombre_subcategoria"
-                                                            value="<?php echo $listaTareas[$i]['nombre_subcategoria']; ?>">
-                                                        <input type="hidden" name="turno" value="<?php echo $listaTareas[$i]['turno']; ?>">
-                                                        <input type="hidden" name="estado" value="<?php echo $listaTareas[$i]['estado']; ?>">
-                                                        <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-                                                        <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
+                                                        <input type="submit" value="Completar">
+                                                        <input type="hidden" name="id_tarea" value="<?php echo htmlspecialchars($tarea['id_tarea']); ?>">
                                                     </form>
-                                                    </button>
                                                 </td>
                                             </tr>
-
-                                        <?php
+                                            <?php
                                         }
                                         ?>
                                     </tbody>
                                 </table>
-
-                                <form action="gestionTareas.php?paso=0" method="post">
-                                    <input type="submit" name="comun2" value="+">
-                                    <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-                                    <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
-                                </form>
-                                <br>
-
-                                <?php
-                                //PRUEBA CON PDF
-                                //ENVIAR EL VALOR DE UNA TAREA
-                                //Guardo el valor de la primera tarea en otro array
-                                if (count($listaTareas) > 0) {
-                                    $primeraTarea[0] = $listaTareas[0]['id_tarea'];
-                                    $primeraTarea[1] = $listaTareas[0]['nombre_subcategoria'];
-                                    $primeraTarea[2] = $listaTareas[0]['turno'];
-                                    $primeraTarea[3] = $listaTareas[0]['estado'];
-
-                                }
-
-                                //Guardo los valores en las variables que le voy a enviar a 'generarPDF()'
-                                //Para 'nombre_categoria' necesito obtenerlo de una consulta a la BD con el dato de la subcategoría que ya tengo
-                                $categoria = "SELECT nombre_categoria FROM categorias WHERE categorias.id_categoria = (SELECT id_categoria FROM subcategorias WHERE nombre_subcategoria='$primeraTarea[1]');";
-                                $categoria = mysqli_query($conexion, $categoria);
-                                $categoria = mysqli_fetch_row($categoria);
-                                $nombre_categoria = $categoria[0];
-                                //-----------------------------------------------------------------------------
-                                $subcategoria = $primeraTarea[1];
-                                $turno = $primeraTarea[2];
-                                //-----------------------------------------------------------------------------
-                                ?>
-                                <br>
-
-                                <form action="gestionTareas.php?paso=5" method="post">
-                                    <input type="submit" name="comun2" value="Generar PDF">
-                                    <input type="hidden" name="subcategoria" value="<?php echo $subcategoria; ?>">
-                                    <input type="hidden" name="turno" value="<?php echo $turno; ?>">
-                                    <input type="hidden" name="categoria" value="<?php echo $nombre_categoria; ?>">
-                                    <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
-                                    <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
-                                </form>
-                                <br>
-
-                                <!--------------------------------->
                             </div>
+
+                            <?php
+                            
+
+                            ?>
+                            <form action="gestionTareas.php?paso=0" method="post">
+                                <input type="submit" name="comun2" value="+">
+                                <input type="hidden" name="nombre_usuario" value="<?php echo $nombre_usuario; ?>">
+                                <input type="hidden" name="correo_usuario" value="<?php echo $correo_usuario; ?>">
+                            </form>
+                            <br>
+                            <br>
+                            <form action="gestionTareas.php?paso=5" method="post">
+                                <input type="submit" name="comun2" value="Generar PDF">
+                            </form>
+                            <br>
+
+                            <form action="" method="get" style="display:inline;">
+                                <button type="submit" name="logout" value="1">CERRAR SESIÓN</button>
+                            </form>
+                            <!--------------------------------->
                     <?php
                     }
+                    ?>
+            </div>
+        <?php
         }
     }
 ?>
