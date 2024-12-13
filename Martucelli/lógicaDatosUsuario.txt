@@ -1,0 +1,18 @@
+index.php
+|
+|-------Inicia sesión
+|	|
+|	|------------inicioSesion.php
+|	
+|-------Registra sesión
+|	|
+|	|------------registraSesion.php
+|			|
+|			|---- YA EXISTE USUARIO
+|			|	|
+|			|	|----registraSesion.php
+|			|
+|			|---- NO EXISTE USUARIO
+|				|
+|				|----inicioSesion.php
+|
