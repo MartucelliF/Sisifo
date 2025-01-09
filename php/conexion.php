@@ -1,10 +1,12 @@
 <?php
 
 //declaro variables para la conexión
+//DEJAMOS LOS DATOS EN BLANCO POR SEGURIDAD
 $sevidor = "localhost"; //el servidor que se utiliza --> phpMyAdmin utiliza localhost
-$usuario = "u605796466_sisifo"; //por default, es 'root'
-$contraseña = "Fomentarestudio2024"; //por default, la contraseña está vacía
-$BD = "u605796466_rutina"; //nombre de la BD a la que me quiero vincular
+$usuario = ""; //por default, es 'root'
+$contraseña = ""; //por default, la contraseña está vacía
+$BD = ""; //nombre de la BD a la que me quiero vincular
+
 
 //Conexión con la BD
 $conexion = mysqli_connect($sevidor, $usuario, $contraseña, $BD);
